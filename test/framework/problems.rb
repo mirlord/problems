@@ -21,7 +21,14 @@ module Problems
     end
 
     def on(opts, &block)
-      @cases << PCase.new(opts, block)
+      if opts.is_a?(String)
+        options = {:input => opts}
+      elsif opts.is_a?(Array)
+        options = {:input => opts.join("\n")}
+      else
+        options = opts
+      end
+      @cases << PCase.new(options, block)
     end
 
   end

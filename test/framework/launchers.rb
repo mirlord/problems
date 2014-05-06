@@ -5,9 +5,16 @@ module Problems
     class BaseLauncher
       def exec(cmd, input)
         IO.popen(cmd, 'r+') do |io|
-          io.write( input ) if input
+          io.write input unless input.nil?
+          io.write "\n"
           return io.read
         end
+      end
+
+      def get_args(opts)
+        args = opts[:args]
+        return args if args.is_a? String
+        return (args.nil? || args.empty?) ? "" : args.join(' ')
       end
     end
 
@@ -18,13 +25,21 @@ module Problems
         `mkdir -p java/build/classes`
         `javac java/src/problems/#{pclass}.java -d java/build/classes`
         # run
-        return exec("java -cp java/build/classes problems.#{pclass} #{options[:args]}",
+        return exec("java -cp java/build/classes problems.#{pclass} #{get_args(options)}",
+                    options[:input])
+      end
+    end
+
+    class ErlangLauncher < BaseLauncher
+      def run(problem_name, options)
+        return exec("escript erlang/src/#{problem_name}.erl #{get_args(options)}",
                     options[:input])
       end
     end
 
     LAUNCHERS = {
       :java => JavaLauncher.new,
+      :erlang => ErlangLauncher.new,
     }
 
   end
