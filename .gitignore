@@ -7,3 +7,5 @@ target
 .lein-repl-history
 ebin
 *.beam
+.idea
+*.iml
