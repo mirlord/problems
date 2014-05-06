@@ -30,6 +30,16 @@ module Problems
       end
     end
 
+    class CCLauncher < BaseLauncher
+      def run(problem_name, options)
+        # compile
+        `gcc -lm cc/#{problem_name}.c -o cc/a.out`
+        # run
+        return exec("cc/a.out #{get_args(options)}",
+                    options[:input])
+      end
+    end
+
     class ErlangLauncher < BaseLauncher
       def run(problem_name, options)
         return exec("escript erlang/src/#{problem_name}.erl #{get_args(options)}",
@@ -40,6 +50,7 @@ module Problems
     LAUNCHERS = {
       :java => JavaLauncher.new,
       :erlang => ErlangLauncher.new,
+      :cc => CCLauncher.new,
     }
 
   end
