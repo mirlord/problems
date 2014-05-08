@@ -12,7 +12,8 @@ module Problems
     end
 
     def exactly( expected )
-      assert @output.strip.eql?( expected.strip )
+      expected = expected.join(" ") if expected.is_a? Array
+      assert @output.strip.eql?( expected.to_s.strip )
     end
 
   end

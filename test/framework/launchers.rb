@@ -12,9 +12,7 @@ module Problems
       end
 
       def get_args(opts)
-        args = opts[:args]
-        return args if args.is_a? String
-        return (args.nil? || args.empty?) ? "" : args.join(' ')
+        return %{"#{opts[:args].join('" "')}"}
       end
     end
 
