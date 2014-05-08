@@ -1,14 +1,13 @@
+require 'open3'
+
 module Problems
 
   module Launchers
 
     class BaseLauncher
       def exec(cmd, input)
-        IO.popen(cmd, 'r+') do |io|
-          io.write input unless input.nil?
-          io.write "\n"
-          return io.read
-        end
+        output, _ = Open3.capture2(cmd, :stdin_data => input)
+        return output
       end
 
       def get_args(opts)

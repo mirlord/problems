@@ -3,10 +3,36 @@ module Problems
 
   class PResult
 
-    include Problems::Verifiers
+    include Problems::Matchers
 
     def initialize(str)
       @output = str
+    end
+
+    def verify(block)
+      instance_exec(&block)
+    end
+
+    def assert(cond)
+      if cond
+        puts 'OK'
+      else
+        puts 'FAIL'
+      end
+    end
+
+    def matches(expectations)
+
+      expectations = [expectations] if ! expectations.is_a? Array
+      matches = true
+      expectations.zip(@output.strip.split("\n")).each do |e, v|
+        e = exactly(e) unless e.is_a? Problems::Matchers::Matcher
+        matches = matches && e.matches(v)
+        if (!matches)
+          puts "Expected: #{e.to_s}, found: <#{v}>"
+        end
+      end
+      assert matches
     end
 
   end
@@ -15,9 +41,10 @@ module Problems
 
     attr_reader :name, :cases
 
-    def initialize(name)
+    def initialize(name, block)
       @name = name
       @cases = []
+      instance_exec(&block)
     end
 
     def on(args = [], opts, &block)
@@ -57,8 +84,7 @@ module Problems
 end
 
 def problem(name, &block)
-  p = Problems::Problem.new(name)
+  p = Problems::Problem.new(name, block)
   CTX.put(p)
-  block.yield p
 end
 

@@ -16,8 +16,7 @@ module Problems
         # obtain raw string output
         out = launcher.run(name, tc.options)
         # construct verifiable result
-        r = PResult.new(out)
-        tc.assertion.yield r
+        PResult.new(out).verify(tc.assertion)
       end
     end
 
